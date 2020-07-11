@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="password">Password</string>
+    <string name="fb">FB</string>
+    <string name="create_account">Create Account</string>
+    <string name="email">Email</string>
+    <string name="user_name">User Name</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="something_went_wrong">Something went wrong!</string>
+    <string name="you_havent_picked_image">You haven\'t picked image.</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="users">users</string>
+    <string name="profile">profile</string>
+    <string name="save_your_photo">Save your photo</string>
+    <string name="chats">Chats</string>
+    <string name="chatting">Chatting</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="image">Image</string>
+    <string name="sing_up">Sing Up</string>
+    <string name="log_out">Log out</string>
+    <string name="search">Search</string>
+    <string name="send">send</string>
+    <string name="seen">Seen</string>
+    <string name="hello">Hello</string>
+    <string name="forgot_your_password">Forgot your password ?</string>
+    <string name="rest_password">Rest password</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="by_clicking_reset_you_will_receive_emile_to_reset_your_password">By clicking RESET,you will receive email to reset your password</string>
+    <string name="reset">RESET</string>
+</resources>
