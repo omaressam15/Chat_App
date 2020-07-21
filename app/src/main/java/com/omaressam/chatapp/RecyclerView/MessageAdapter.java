@@ -50,9 +50,9 @@ public class MessageAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         final Chat chat = mChat.get(position);
 
-        holder.message.setText(chat.getMessage());
 
-      //  holder.bindView2(mChat.get(position));
+
+        holder.bindView2(mChat.get(position));
 
        /* if (imageURL.equals("ImageUrl")){
             holder.picUser.setImageResource(R.drawable.img_placeholder);

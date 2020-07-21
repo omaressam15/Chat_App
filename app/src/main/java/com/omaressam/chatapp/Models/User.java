@@ -11,6 +11,20 @@ public class User implements Serializable {
     private String status;
     private String search;
 
+    public User(String id, String name, String email, String image, String password, String status, String search) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.image = image;
+        this.password = password;
+        this.status = status;
+        this.search = search;
+    }
+
+    public User () {
+
+    }
+
     public String getId() {
         return id;
     }

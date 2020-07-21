@@ -90,8 +90,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserHolder> {
 
         theLastMassage = "default";
 
-
-
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");

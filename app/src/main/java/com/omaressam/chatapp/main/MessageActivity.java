@@ -38,6 +38,7 @@ import com.omaressam.chatapp.Notifications.Sender;
 import com.omaressam.chatapp.Notifications.Token;
 import com.omaressam.chatapp.R;
 import com.omaressam.chatapp.RecyclerView.MessageAdapter;
+import com.omaressam.chatapp.Utilities.Utilities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,10 +55,10 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
     CircleImageView profile_pic;
     TextView userName;
-    TextView status;
+    TextView statusT;
     ImageButton imageButton;
     EditText editText;
-
+    FirebaseAuth mAuth;
     FirebaseUser firebaseUser;
     DatabaseReference reference;
 
@@ -72,7 +73,9 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     ValueEventListener SeenListener;
 
     RecyclerView recyclerView;
-
+    private String messageReceiverID;
+   // private String saveCurrentTime, saveCurrentDate;
+    private String currentUserID;
     private RequestQueue requestQueue;
 
     private boolean notify = false;
@@ -86,9 +89,15 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         RecyclerView();
         setFirebaseUser();
 
+        mAuth = FirebaseAuth.getInstance();
+        firebaseUser= mAuth.getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference();
+
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         userid = intent.getStringExtra("userid");
+
+        DisplayLastSeen();
 
     }
 
@@ -109,8 +118,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
                 assert user != null;
                 userName.setText(user.getName());
 
-                status.setText(user.getStatus());
-
+                statusT.setText(user.getStatus());
 
                 if (user.getImage().equals("ImageUrl")) {
                     profile_pic.setImageResource(R.mipmap.ic_launcher);
@@ -142,8 +150,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
-
                     assert chat != null;
+
                     if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid)) {
 
                         HashMap<String, Object> hashMap = new HashMap<>();
@@ -193,10 +201,46 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     private void setUpViews() {
         profile_pic = findViewById(R.id.profile_image);
         userName = findViewById(R.id.username);
-        status = findViewById(R.id.status);
+        statusT = findViewById(R.id.status);
         editText = findViewById(R.id.editText);
         imageButton = findViewById(R.id.imageButton);
+
         imageButton.setOnClickListener(this);
+    }
+
+    private void DisplayLastSeen()
+    {
+        reference.child("Users").child(userid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot)
+                    {
+                        if (dataSnapshot.hasChild("status"))
+                        {
+                            String state = dataSnapshot.child("status").getValue().toString();
+                            String date = dataSnapshot.child("date").getValue().toString();
+                            String time = dataSnapshot.child("time").getValue().toString();
+
+                            if (state.equals("Online"))
+                            {
+                                statusT.setText("Online");
+                            }
+                            else if (state.equals("Offline"))
+                            {
+                                statusT.setText("Last Seen: " + date + " " + time);
+                            }
+                        }
+                        else
+                        {
+                            statusT.setText("Offline");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
 
@@ -210,6 +254,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
         hashMap.put("isseen", false);
+        hashMap.put("Time", Utilities.getCurrentDate());
+        hashMap.put("Data",Utilities.getDate());
 
         reference.child("Chats").push().setValue(hashMap);
         final String userid = intent.getStringExtra("userid");
@@ -222,6 +268,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (!dataSnapshot.exists()) {
                     chatRef.child("id").setValue(userid);
                 }
@@ -264,7 +311,10 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
 
                     Token token = snapshot.getValue(Token.class);
                     Data data = new Data(firebaseUser.getUid()
@@ -372,11 +422,16 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void status(String status) {
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
+
+
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()) ;
+
         reference.updateChildren(hashMap);
+
     }
 
     @Override
@@ -386,10 +441,15 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        status("Online");
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         reference.removeEventListener(SeenListener);
         status("Offline");
     }
-
 }
